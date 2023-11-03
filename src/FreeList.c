@@ -1,16 +1,15 @@
-#include<stdlib.h>
 #include "FreeList.h"
 
 void insert_MainNode(MainChain **root,SideChain *node,int pages){
     if((*root)==NULL){
-        *root=(MainChain*)malloc(sizeof(MainChain));
+        *root=(MainChain*)my_mem_alloc(sizeof(MainChain));
         (*root)->next=NULL;
         (*root)->prev=NULL;
         (*root)->sideChain=*node;
         (*root)->pages=pages;
         return;
     }
-    MainChain *temp=(*root)->prev,*new=*root=(MainChain*)malloc(sizeof(MainChain));
+    MainChain *temp=(*root)->prev,*new=*root=(MainChain*)my_mem_alloc(sizeof(MainChain));
     new->sideChain=*node;
     new->pages=pages;
     new->next=*root;
@@ -30,13 +29,13 @@ void delete_MainNode(MainChain **root){
         return;
     }
     if((*root)->prev==NULL){
-        free(*root);
+        my_mem_free(*root);
         *root=NULL;
         return;
     }
     MainChain *temp=(*root)->prev;
     if(temp==(*root)->next){
-        free(*root);
+        my_mem_free(*root);
         temp->prev=NULL;
         temp->next=NULL;
         *root=temp;
@@ -44,7 +43,7 @@ void delete_MainNode(MainChain **root){
     }
     temp->next=(*root)->next;
     (*root)->next->prev=temp;
-    free(*root);
+    my_mem_free(*root);
     *root=temp;
 }
 
@@ -53,13 +52,13 @@ void delete_SideNode(SideChain **root){
         return;
     }
     if((*root)->prev==NULL){
-        free(*root);
+        my_mem_free(*root);
         *root=NULL;
         return;
     }
     SideChain *temp=(*root)->prev;
     if(temp==(*root)->next){
-        free(*root);
+        my_mem_free(*root);
         temp->prev=NULL;
         temp->next=NULL;
         *root=temp;
@@ -67,20 +66,20 @@ void delete_SideNode(SideChain **root){
     }
     temp->next=(*root)->next;
     (*root)->next->prev=temp;
-    free(*root);
+    my_mem_free(*root);
     *root=temp;
 }
 
 void insert_SideNode(SideChain **root,Freestatus status,int size){
     if((*root)==NULL){
-        *root=(SideChain*)malloc(sizeof(SideChain));
+        *root=(SideChain*)my_mem_alloc(sizeof(SideChain));
         (*root)->next=NULL;
         (*root)->prev=NULL;
         (*root)->status=status;
         (*root)->size=size;
         return;
     }
-    SideChain *temp=(*root)->prev,*new=*root=(SideChain*)malloc(sizeof(SideChain));
+    SideChain *temp=(*root)->prev,*new=*root=(SideChain*)my_mem_alloc(sizeof(SideChain));
     new->status=status;
     new->size=size;
     new->next=*root;

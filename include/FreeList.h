@@ -1,5 +1,7 @@
 #ifndef _FREELIST_h
 #define _FREELIST_h
+#include "memsyscall.h"
+
 enum free_or_not{
     HOLE,
     PROCESS

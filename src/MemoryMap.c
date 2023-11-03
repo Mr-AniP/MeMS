@@ -1,10 +1,8 @@
-
-#include<stdlib.h>
 #include "MemoryMap.h"
 
 void insert_Process(ProcessChain **root,MemoryChain *node,int id){
     if((*root)==NULL){
-        (*root)=(ProcessChain *)malloc(sizeof(ProcessChain));
+        (*root)=(ProcessChain *)my_mem_alloc(sizeof(ProcessChain));
         (*root)->id=id;
         (*root)->next=NULL;
         (*root)->memory=node;
@@ -14,7 +12,7 @@ void insert_Process(ProcessChain **root,MemoryChain *node,int id){
     while(temp->next!=NULL){
         temp=temp->next;
     }
-    temp->next=(ProcessChain *)malloc(sizeof(ProcessChain));
+    temp->next=(ProcessChain *)my_mem_alloc(sizeof(ProcessChain));
     temp->next->id=id;
     temp->next->next=NULL;
     temp->next->memory=node;
@@ -26,12 +24,12 @@ void delete_Process(ProcessChain **root){
     }
     ProcessChain *temp=(*root);
     (*root)=(*root)->next;
-    free(temp);
+    my_mem_free(temp);
 }
 
 void insert_memoryNode(MemoryChain **root,int virtualmax,int virtualmin,int physicalmax,int physicalmin){
     if((*root)==NULL){
-        (*root)=(MemoryChain *)malloc(sizeof(MemoryChain));
+        (*root)=(MemoryChain *)my_mem_alloc(sizeof(MemoryChain));
         (*root)->virtualmax=virtualmax;
         (*root)->virtualmin=virtualmin;
         (*root)->physicalmax=physicalmax;
@@ -40,7 +38,7 @@ void insert_memoryNode(MemoryChain **root,int virtualmax,int virtualmin,int phys
         (*root)->prev=NULL;
         return;
     }
-    MemoryChain head=(*root)->prev,*temp=(MemoryChain *)malloc(sizeof(MemoryChain));
+    MemoryChain head=(*root)->prev,*temp=(MemoryChain *)my_mem_alloc(sizeof(MemoryChain));
     temp->virtualmax=virtualmax;
     temp->virtualmin=virtualmin;
     temp->physicalmax=physicalmax;
@@ -61,13 +59,13 @@ void delete_memoryNode(MemoryChain **root){
         return;
     }
     if((*root)->prev==NULL){
-        free(*root);
+        my_mem_free(*root);
         *root=NULL;
         return;
     }
     MemoryChain *temp=(*root)->prev;
     if(temp==(*root)->next){
-        free(*root);
+        frmy_mem_freeee(*root);
         temp->prev=NULL;
         temp->next=NULL;
         *root=temp;
@@ -75,6 +73,6 @@ void delete_memoryNode(MemoryChain **root){
     }
     temp->next=(*root)->next;
     (*root)->next->prev=temp;
-    free(*root);
+    my_mem_free(*root);
     *root=temp;
 }

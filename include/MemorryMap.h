@@ -1,5 +1,6 @@
 #ifndef _MEMMORYMAP_h
 #define _MEMMORYMAP_h
+#include "memsyscall.h"
 
 struct Node{   
     int virtualmax;

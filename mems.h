@@ -9,8 +9,7 @@ you can also make additional helper functions a you wish
 REFER DOCUMENTATION FOR MORE DETAILS ON FUNSTIONS AND THEIR FUNCTIONALITY
 */
 // add other headers as required
-#include<stdio.h>
-#include<stdlib.h>
+#include "mainimpl.h"
 
 
 /*
@@ -18,7 +17,7 @@ Use this macro where ever you need PAGE_SIZE.
 As PAGESIZE can differ system to system we should have flexibility to modify this 
 macro to make the output of all system same and conduct a fair evaluation. 
 */
-#define PAGE_SIZE 4096
+
 
 
 /*
@@ -30,7 +29,7 @@ Input Parameter: Nothing
 Returns: Nothing
 */
 void mems_init(){
-
+    my_mem_init();
 }
 
 
@@ -58,7 +57,7 @@ Parameter: The size of the memory the user program wants
 Returns: MeMS Virtual address (that is created by MeMS)
 */ 
 void* mems_malloc(size_t size){
-
+    return my_mem_alloc(size);
 }
 
 
@@ -91,5 +90,5 @@ Parameter: MeMS Virtual address (that is created by MeMS)
 Returns: nothing
 */
 void mems_free(void *v_ptr){
-    
+    mems_free(v_ptr);
 }

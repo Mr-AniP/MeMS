@@ -1,4 +1,25 @@
-#include "MemoryMap.h"
+#ifndef _MEMMORYMAP_h
+#define _MEMMORYMAP_h
+#include "memsyscall.h"
+
+struct Node{   
+    int virtualmax;
+    int virtualmin;
+    int physicalmax;
+    int physicalmin;
+    struct Node *next;
+    struct Node *prev;
+};
+
+struct nodeproc{
+    int pid;
+    struct Node *memoryhead;
+    struct nodeproc *next;
+};
+
+typedef struct Node MemoryChain;
+typedef struct nodeproc ProcessChain;
+
 
 void insert_Process(ProcessChain **root,MemoryChain *node,int id){
     if((*root)==NULL){
@@ -76,3 +97,5 @@ void delete_memoryNode(MemoryChain **root){
     my_mem_free(*root);
     *root=temp;
 }
+
+#endif

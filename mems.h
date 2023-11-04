@@ -40,7 +40,7 @@ Input Parameter: Nothing
 Returns: Nothing
 */
 void mems_finish(){
-    
+    mem_dealloc();
 }
 
 
@@ -70,7 +70,7 @@ Parameter: Nothing
 Returns: Nothing but should print the necessary information on STDOUT
 */
 void mems_print_stats(){
-
+    free_list_info();
 }
 
 
@@ -80,7 +80,7 @@ Parameter: MeMS Virtual address (that is created by MeMS)
 Returns: MeMS physical address mapped to the passed ptr (MeMS virtual address).
 */
 void *mems_get(void*v_ptr){
-    
+    return my_mem_to_physical_addr(v_ptr);
 }
 
 

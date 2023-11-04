@@ -1,4 +1,4 @@
-#include "mysyscall.h"
+#include "memsyscall.h"
 // Function to use system call to allocate memory pages
 void *page_allocater(int pages){}
 

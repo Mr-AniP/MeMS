@@ -40,7 +40,7 @@ void *my_mem_alloc(size_t size){
 }
 
 void my_mem_free(void *ptr){
-    SideChain* node= (SideChain*)((char*)v_ptr -sizeof(SideChain));
+    SideChain* node= (SideChain*)((char*)ptr -sizeof(SideChain));
     node->status=HOLE;
     while(try_merge(&node)!=0);
 }

@@ -9,7 +9,12 @@ you can also make additional helper functions a you wish
 REFER DOCUMENTATION FOR MORE DETAILS ON FUNSTIONS AND THEIR FUNCTIONALITY
 */
 // add other headers as required
+#include "memsyscall.h"
+#include "memsyscall.c"
+#include "freelist.h"
+#include "freelist.c"
 #include "mainimpl.h"
+#include "mainimpl.c"
 
 
 /*

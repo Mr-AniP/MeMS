@@ -44,10 +44,19 @@ int main(int argc, char const *argv[])
     reallocating the space that will be fullfilled by the free list.
     */
     printf("\n--------- Freeing up the memory [mems_free] --------\n");
+    // origional test case
     mems_free(ptr[3]);
     mems_print_stats();
     ptr[3] = (int*)mems_malloc(sizeof(int)*250);
     mems_print_stats();
+
+    // to test the effect of mems_finish on the joinable blocks
+    // mems_free(ptr[4]);
+    // mems_free(ptr[5]);
+    // mems_print_stats();
+    // ptr[4] = (int*)mems_malloc(sizeof(int)*250);
+    // ptr[5] = (int*)mems_malloc(sizeof(int)*250);
+    // mems_print_stats();
 
     printf("\n--------- Unmapping all memory [mems_finish] --------\n\n");
     mems_finish();

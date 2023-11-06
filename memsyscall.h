@@ -5,6 +5,8 @@
 
 // Header files needed
 #include <stdio.h> 
+#include <stdint.h>
+// add files as needed
 
 
 // conatins impl of systyem calls for memory allocation and freeing (in terms of pagesize)

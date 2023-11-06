@@ -31,7 +31,7 @@ typedef enum free_or_not Freestatus;
 // Important usefull functions
 void insert_MainNode(MainChain **root,int pages);
 void delete_MainNode(MainChain **root);
-void insert_SideNode(SideChain *current,int size);
+void insert_SideNode(SideChain *current,int size,int sz1);
 int try_merge(SideChain **node);
 // void delete_SideNode(SideChain **root);
 

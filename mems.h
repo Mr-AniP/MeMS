@@ -13,6 +13,8 @@ REFER DOCUMENTATION FOR MORE DETAILS ON FUNSTIONS AND THEIR FUNCTIONALITY
 #include "memsyscall.c"
 #include "freelist.h"
 #include "freelist.c"
+#include "memorymap.h"
+#include "memorymap.c"
 #include "mainimpl.h"
 #include "mainimpl.c"
 

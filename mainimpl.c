@@ -1,28 +1,50 @@
 #include "mainimpl.h"
-// implementation of mems.h functions
-
-MainChain* FREE_HEAD ;
-// ProcessChain* MEMORY_HEAD;
-void my_mem_init(void){
-    FREE_HEAD=NULL;
-    // MEMORY_HEAD=NULL;
+// page calculation function
+int pagesRequired(int s){
+    s+=sizeof(MainChain)+sizeof(SideChain)+sizeof(ProcessChain);
+    float f=(float)s/PAGE_SIZE;
+    s=(int)f;
+    if(f==s){
+        return s;
+    }
+    else{
+        return s+1;
+    }
 }
 
+// implementation of mems.h functions
+MainChain* FREE_HEAD ;
+ProcessChain* MEMORY_HEAD;
+void my_mem_init(void){
+    FREE_HEAD=NULL;
+    MEMORY_HEAD=NULL;
+}
 
 void *my_mem_alloc(size_t size){
     MainChain* temp=FREE_HEAD;
     SideChain* temp2=NULL;
+    int vmin=0;
+    int vmax=0;
+    int s3=0;
     do{
         if(temp!=NULL){
             temp2=temp->side_chain;
+            vmin+=vmin+sizeof(MainChain);
             do{
                 if(temp2!=NULL){
-                    if(temp2->status==HOLE && temp2->size>=size){
-                        if(temp2->size > size + sizeof(SideChain)){
-                            insert_SideNode(temp2,size);
+                    vmin+=sizeof(SideChain);
+                    if(temp2->status==HOLE && temp2->size>=(size+sizeof(ProcessChain))){
+                        vmin+=sizeof(ProcessChain);
+                        if(temp2->size > size + sizeof(SideChain) + sizeof(ProcessChain)){
+                            insert_SideNode(temp2,size,sizeof(ProcessChain));
                         }
                         temp2->status=PROCESS;
-                        return (void*)((char*)temp2 + sizeof(SideChain));
+                        vmax=vmin+size-1;
+                        insert_Process(&MEMORY_HEAD,(void*)((char*)temp2 + sizeof(SideChain)),(void*)((char*)temp2 + sizeof(SideChain)+sizeof(ProcessChain)),(uintptr_t) vmax, (uintptr_t) vmin);
+                        return (void*)(uintptr_t) vmin;
+                    }
+                    else if(temp2->status==PROCESS){
+                        vmin+=sizeof(ProcessChain)+temp2->size;
                     }
                     temp2=temp2->next;
                 }
@@ -30,35 +52,33 @@ void *my_mem_alloc(size_t size){
             temp=temp->next;
         }
     }while(temp!=FREE_HEAD);
-    insert_MainNode(&FREE_HEAD,1+((int)size/PAGE_SIZE));
+
+    insert_MainNode(&FREE_HEAD,pagesRequired(size));
+    vmin+=sizeof(SideChain)+sizeof(MainChain);
+    vmax=vmin+size-1;
     temp2=FREE_HEAD->prev->side_chain;
-    if(temp2->size > size + sizeof(SideChain)){
-        insert_SideNode(temp2,size);
+    if(temp2->size > size + sizeof(SideChain)+ sizeof(ProcessChain)){
+        insert_SideNode(temp2,size,sizeof(ProcessChain));
     }
     temp2->status=PROCESS;
-    return (void*)((char*)temp2 + sizeof(SideChain));
-}
-
-void my_mem_free(void *ptr){
-    SideChain* node= (SideChain*)((char*)ptr -sizeof(SideChain));
-    node->status=HOLE;
-    while(try_merge(&node)!=0);
+    insert_Process(&MEMORY_HEAD,(void*)((char*)temp2 + sizeof(SideChain)),(void*)((char*)temp2 + sizeof(SideChain)+sizeof(ProcessChain)),(uintptr_t) vmax, (uintptr_t) vmin);
+    return (void*)(uintptr_t) vmin;
 }
 
 
 void mem_dealloc(void){
+    if(MEMORY_HEAD!=NULL){
+        while(MEMORY_HEAD!=NULL){
+            delete_Process(&MEMORY_HEAD,MEMORY_HEAD);
+        }
+    }
     if(FREE_HEAD!=NULL){
         MainChain* temp=FREE_HEAD;
         while(temp!=NULL){
-            delete_MainNode(&temp);
+            delete_MainNode(&temp); 
         }
     }
-    // if(MEMORY_HEAD!=NULL){
-    //     ProcessChain* temp=MEMORY_HEAD;
-    //     while(temp!=NULL){
-    //         delete_Process(&temp);
-    //     }
-    // }
+    //this will atomatically delete complete memory chain and free all the memory
 } 
 
 void free_list_info(void){
@@ -80,13 +100,18 @@ void free_list_info(void){
                     s2=s1+sizeof(SideChain)-1;
                     printf("S_NODE[%d : %d] <-> ", s1, s2);
                     s1=s2+1;
-                    s2=s1+temp2->size-1;
                     if(temp2->status==HOLE){
+                        s2=s1+temp2->size-1;
                         printf("HOLE[%d : %d] <-> ",s1, s2);
                         free+=temp2->size;
                     }
-                    else
+                    else{
+                        s2=s1+sizeof(ProcessChain)-1;
+                        printf("MMap_P[%d : %d] <-> ", s1, s2);
+                        s1=s2+1;
+                        s2=s1+temp2->size-1;
                         printf("PROCESS[%d : %d] <-> ",s1, s2);
+                        }
                     s1=s2+1;
                     temp2=temp2->next;
                 }
@@ -102,5 +127,23 @@ void free_list_info(void){
 }
 
 void * my_mem_to_physical_addr(void *v_ptr){
+    uintptr_t  v_ptr1=(uintptr_t)v_ptr;
+    ProcessChain* temp=MEMORY_HEAD;
+    while(temp!=NULL){
+        if(temp->virt_max>=v_ptr1 && temp->virt_min<=v_ptr1){
+            return temp->phys_addr + (v_ptr1-temp->virt_min);
+        }
+        temp=temp->next;
+    }
     return NULL;
+}
+
+void my_mem_free(void *ptr){
+    ptr=my_mem_to_physical_addr(ptr);
+    ptr=((char*)ptr -sizeof(ProcessChain));
+    SideChain* node= (SideChain*)((char*)ptr -sizeof(SideChain));
+    delete_Process(&MEMORY_HEAD,(ProcessChain*)ptr);
+    node->status=HOLE;
+    node->size+=sizeof(ProcessChain);
+    while(try_merge(&node)!=0);
 }

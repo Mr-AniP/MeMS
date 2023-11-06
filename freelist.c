@@ -78,14 +78,14 @@ void delete_MainNode(MainChain **root){
 //     *root=temp;
 // }
 
-void insert_SideNode(SideChain *current,int size){
+void insert_SideNode(SideChain *current,int size,int sz1){
     if(current==NULL){
         printf("ERROR :: Current Block is NULL\n");
         return;
     }
-    SideChain *newnode=(SideChain*) ((char*)current + sizeof(SideChain) + size);
+    SideChain *newnode=(SideChain*) ((char*)current + sizeof(SideChain) + size +sz1);
     newnode->status=HOLE;
-    newnode->size=current->size-size-sizeof(SideChain);
+    newnode->size=current->size-size-sizeof(SideChain)-sz1;
     newnode->next=current->next;
     newnode->prev=current;
     current->next=newnode;

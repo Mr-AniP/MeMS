@@ -95,5 +95,5 @@ Parameter: MeMS Virtual address (that is created by MeMS)
 Returns: nothing
 */
 void mems_free(void *v_ptr){
-    mems_free(v_ptr);
+    my_mem_free(v_ptr);
 }

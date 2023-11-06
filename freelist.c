@@ -97,14 +97,14 @@ int try_merge(SideChain **node){
     if((*node)->status!=HOLE){
         return 0;
     }
-    if((*node)->prev->status==HOLE){
+    if((*node)->prev<(*node) && (*node)->prev->status==HOLE){
         (*node)->prev->size+=(*node)->size+sizeof(SideChain);
         (*node)->prev->next=(*node)->next;
         (*node)->next->prev=(*node)->prev;
         (*node)=(*node)->prev;
         return 1;
     }
-    if((*node)->next->status==HOLE){
+    if((*node)->next>(*node) &&(*node)->next->status==HOLE){
         (*node)->size+=(*node)->next->size+sizeof(SideChain);
         (*node)->next->next->prev=(*node);
         (*node)->next=(*node)->next->next;

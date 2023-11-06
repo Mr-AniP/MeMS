@@ -62,31 +62,36 @@ void mem_dealloc(void){
 } 
 
 void free_list_info(void){
-    printf("FreeList:\n");
+    printf("\nFreeList:\n\n");
     MainChain* temp=FREE_HEAD;
     SideChain* temp2=NULL;
-    int s1=0,s2=0,free=0;
-    int i=1,x=1;
+    int s1=0,s2=0,free=0,s3=0;
+    int i=1;
     do{
         if(temp!=NULL){
-            s2=(temp->pages)*PAGE_SIZE-1;
-            printf("MainChain Node - %d Mem_size[ %d : %d ] -> ", i, s1, s2);
+            s3=s1+(temp->pages*PAGE_SIZE)-1;
+            printf("MainNode-%d [%d : %d] -> ", i, s1, s3);
+            s2=s1+sizeof(MainChain)-1;
+            printf("M_NODE[%d : %d] <-> ", s1, s2);
+            s1=s2+1;
             temp2=temp->side_chain;
-            x=1;
             do{
                 if(temp2!=NULL){
+                    s2=s1+sizeof(SideChain)-1;
+                    printf("S_NODE[%d : %d] <-> ", s1, s2);
+                    s1=s2+1;
                     s2=s1+temp2->size-1;
                     if(temp2->status==HOLE){
-                        printf("SideChain Node - %d Mem_size[ %d : %d ] ( HOLE ) <-> ", x, s1, s2);
+                        printf("HOLE[%d : %d] <-> ",s1, s2);
                         free+=temp2->size;
                     }
                     else
-                        printf("SideChain Node - %d Mem_size[ %d : %d ] ( PROCESS ) <-> ", x, s1, s2);
+                        printf("PROCESS[%d : %d] <-> ",s1, s2);
                     s1=s2+1;
                     temp2=temp2->next;
-                    x++;
                 }
             }while(temp2!=temp->side_chain);
+            s1=s3+1;
             temp=temp->next;
             i++;
         }
